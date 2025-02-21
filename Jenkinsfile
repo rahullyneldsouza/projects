@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        LINODE_TOKEN = credentials('LINODE_TOKEN')  // Fetch token from Jenkins credentials
+        PATH = "/usr/local/bin:$PATH"
     }
     stages {
         stage('Terraform Init & Apply') {
@@ -9,21 +9,23 @@ pipeline {
                 sh '''
                 cd terraform
                 terraform init
-                terraform apply -auto-approve -var="linode_token=${LINODE_TOKEN}"
+                terraform apply -auto-approve
+                terraform output -raw kubeconfig > kubeconfig || linode-cli lke kubeconfig-view $(terraform output -raw linode_lke_cluster_id) > kubeconfig
                 '''
             }
         }
-        stage('Retrieve Kubeconfig') {
+        stage('Fix Kubeconfig Formatting') {
             steps {
-                sh 'terraform output -raw kubeconfig > terraform/kubeconfig'
+                sh '''
+                sed -i 's/\\n/\\n/g' terraform/kubeconfig
+                chmod 600 terraform/kubeconfig
+                '''
             }
         }
         stage('Deploy to Kubernetes') {
             steps {
                 sh '''
                 export KUBECONFIG=terraform/kubeconfig
-                which kubectl  # Debugging step to ensure kubectl is found
-                kubectl version --client
                 kubectl apply -f k8s/
                 '''
             }
