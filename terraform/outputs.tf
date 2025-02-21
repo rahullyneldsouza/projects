@@ -1,3 +1,3 @@
 output "kubeconfig" {
-  value = linode_kubernetes_cluster.k8s.kubeconfig
+  value = linode_lke_cluster.k8s.kubeconfig
 }
