@@ -3,7 +3,7 @@
 #  token = var.linode_token
 #}
 
-resource "linode_kubernetes_cluster" "k8s" {
+resource "linode_lke_cluster" "k8s" {
   label = "jenkins-k8s"
   region = "us-east"
   k8s_version = "1.22"
