@@ -1,17 +1,21 @@
 pipeline {
     agent any
     environment {
-        PATH = "/usr/local/bin:$PATH"
+        LINODE_TOKEN = credentials('LINODE_TOKEN')  // Fetch token from Jenkins credentials
     }
     stages {
         stage('Terraform Init & Apply') {
             steps {
-                sh 'cd terraform && /usr/local/bin/terraform init && /usr/local/bin/terraform apply -auto-approve'
+                sh '''
+                cd terraform
+                terraform init
+                terraform apply -auto-approve -var="linode_token=${LINODE_TOKEN}"
+                '''
             }
         }
         stage('Retrieve Kubeconfig') {
             steps {
-                sh '/usr/local/bin/terraform output -raw kubeconfig > terraform/kubeconfig'
+                sh 'terraform output -raw kubeconfig > terraform/kubeconfig'
             }
         }
         stage('Deploy to Kubernetes') {
