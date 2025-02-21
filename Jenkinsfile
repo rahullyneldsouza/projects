@@ -20,7 +20,12 @@ pipeline {
         }
         stage('Deploy to Kubernetes') {
             steps {
-                sh 'export KUBECONFIG=terraform/kubeconfig && kubectl apply -f k8s/'
+                sh '''
+                export KUBECONFIG=terraform/kubeconfig
+                which kubectl  # Debugging step to ensure kubectl is found
+                kubectl version --client
+                kubectl apply -f k8s/
+                '''
             }
         }
     }
