@@ -1,7 +1,7 @@
 # terraform/main.tf
-provider "linode" {
-  token = var.linode_token
-}
+#provider "linode" {
+#  token = var.linode_token
+#}
 
 resource "linode_kubernetes_cluster" "k8s" {
   label = "jenkins-k8s"
