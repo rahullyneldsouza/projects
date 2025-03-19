@@ -9,7 +9,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
-    steps:
+    steps:  # Moved `steps` inside `jobs.deploy`
       - name: Checkout Repository
         uses: actions/checkout@v4
 
@@ -17,7 +17,7 @@ jobs:
         uses: actions/configure-pages@v4
 
       - name: Upload artifacts
-        uses: actions/upload-pages-artifact@v2
+        uses: actions/upload-pages-artifact@v2  # Corrected action name
         with:
           path: .
 
